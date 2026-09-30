@@ -8,22 +8,18 @@ class Nave {
 
   method acelerar(cuanto) {
     velocidad = (velocidad + cuanto).max(0).min(100000) // revisar
-    
   } 
 
   method desacelerar(cuanto) {
     velocidad = (velocidad - cuanto).max(0).min(100000) //revisar
-    
   }
 
   method irHaciaElSol() {
     direccion = 10
-    
   }
 
   method escaparDelSol() {
     direccion = -10
-    
   }
 
   method ponerseParaleloAlSol() {
@@ -61,13 +57,15 @@ class NaveBaliza inherits Nave{
   method cambiarColorDeBaliza(nuevoColor){
     color = nuevoColor
   }
+  method color() = color
   override method prepararViaje(){
     self.cambiarColorDeBaliza("verde")
     self.ponerseParaleloAlSol()  
   } 
+  override method estaTranquila() =  super() and self.color() != "rojo"
 }
 
-class NavePasajero inherits Nave{
+class NavePasajero inherits Nave {
   const cantPasajeros
   var comida = 0
   var bebida = 0
@@ -92,7 +90,7 @@ class NavePasajero inherits Nave{
     self.acercarseUnPocoAlSol()
   }
 }
-class NaveDeCombate inherits Nave{
+class NaveDeCombate inherits Nave {
   var visible = true
   var misiles = false
   const mensajes = []
@@ -124,33 +122,46 @@ class NaveDeCombate inherits Nave{
   method ultimoMensajeEmitido() = mensajes.last()
   method esEscueta() = mensajes.all({m => m.length() > 30})
   method emitioMensaje(mensaje) = mensajes.contains(mensaje)
+
   override method prepararViaje(){
     self.ponerseVisible()
     self.replegarMisiles()
     self.acelerar(15000)
     self.emitioMensaje("Saliendo en mision")
   } 
+  override method estaTranquila() =  super() and !self.misilesDesplegados()
 }
 
 
-class NaveHospital inherits NavePasajero{
+class NaveHospital inherits NavePasajero {
   var quirofano = false
 
   method quirofanoPreparado() {
     quirofano = true
   }
-
   method quirofanoNoPreparado() {
     quirofano = false
-    
   }
-
   method estaPreparado() = quirofano
-
+  override method estaTranquila() =  super() and !self.estaPreparado()
 }
 
-class NaveSigilosa inherits NaveDeCombate{
+class NaveSigilosa inherits NaveDeCombate {
+
   override method estaTranquila() =  super() and self.estaVisible() 
+
 }
 
 
+
+/*
+metodo del padre (Nave) -> method estaTranquila() = combustible >= 4000 and velocidad <= 12000
+metodo del hijo (NaveDeCombate) -> override method estaTranquila() =  super() and !self.misilesDesplegados()
+metodo del nieto (NaveSigilosa) -> override method estaTranquila() =  super() and self.estaVisible() 
+
+es lo mismo que escribirlo 
+
+metodo del padre (Nave) -> method estaTranquila() = combustible >= 4000 and velocidad <= 12000
+metodo del hijo (NaveDeCombate) -> override method estaTranquila() = combustible >= 4000 and velocidad <= 12000  and !self.misilesDesplegados()
+metodo del nieto (NaveSigilosa) -> override method estaTranquila() = combustible >= 4000 and velocidad <= 12000 and !self.misilesDesplegados() and self.estaVisible()
+*/
