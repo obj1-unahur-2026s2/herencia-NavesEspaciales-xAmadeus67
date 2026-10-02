@@ -155,14 +155,14 @@ class NaveDeCombate inherits Nave {
   //method mensajesEmitidos() = mensajes.asList() segunda forma de hacerlo
   method primerMensajeEmitido() = mensajes.first()
   method ultimoMensajeEmitido() = mensajes.last()
-  method esEscueta() = mensajes.all({m => m.length() > 30})
+  method esEscueta() = !mensajes.all({m => m.length() > 30})
   method emitioMensaje(mensaje) = mensajes.contains(mensaje)
 
   override method prepararViaje(){
     self.ponerseVisible()
     self.replegarMisiles()
     self.acelerar(15000)
-    self.emitioMensaje("Saliendo en mision")
+    self.emitirMensaje("Saliendo en mision")
   } 
   override method estaTranquila() =  super() and !self.misilesDesplegados()
   override method escapar() {
